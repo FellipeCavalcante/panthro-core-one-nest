@@ -14,6 +14,8 @@ model enterprise {
   created_at  DateTime? @default(now()) @db.Timestamp(6)
   sector      sector[]
   users       users[]
+
+  tasks tasks[] @relation(map: "fk_task_enterprise")
 }
 
 model flyway_schema_history {
@@ -93,6 +95,9 @@ model tasks {
   finished_at     DateTime?         @db.Timestamp(6)
   task_members    task_members[]
   task_sub_sector task_sub_sector[]
+
+  enterprise_id String     @db.Uuid
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_task_enterprise")
 
   @@index([status], map: "idx_task_status")
 }
