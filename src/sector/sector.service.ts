@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 
-Injectable();
+@Injectable()
 export class SectorService {
   constructor(private prisma: PrismaService) {}
 
