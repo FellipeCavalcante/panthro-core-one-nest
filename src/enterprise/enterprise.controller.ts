@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { EnterpriseService } from './enterprise.service';
 import { CreateEnterpriseDto } from './dtos/create-enterprise.dto';
 import { GetUserId } from 'src/utils/decorators/get-user-id.decorator';
@@ -9,12 +9,17 @@ export class EnterpriseController {
 
   @Post('create')
   async create(@Body() request: CreateEnterpriseDto, @GetUserId() id: string) {
-    console.log('ID vindo do decorator:', id);
     return this.service.create({ id, ...request });
   }
 
   @Get()
-  async findAll() {
-    return this.service.getAll();
+  async findAll(
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+  ) {
+    const currentPage = page && page > 0 ? Number(page) : 1;
+    const currentPageSize = pageSize && pageSize > 0 ? Number(pageSize) : 20;
+
+    return this.service.getAll(currentPage, currentPageSize);
   }
 }

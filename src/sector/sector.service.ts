@@ -75,7 +75,7 @@ export class SectorService {
     }
   }
 
-  async getAll(id: string, page = 1, pageSize = 10) {
+  async getAll(id: string, page = 1, pageSize = 20) {
     try {
       const skip = (page - 1) * pageSize;
       const user = await this.prisma.users.findUnique({

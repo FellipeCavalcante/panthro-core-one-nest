@@ -86,7 +86,7 @@ export class EnterpriseService {
     }
   }
 
-  async getAll(page = 1, pageSize = 10) {
+  async getAll(page = 1, pageSize = 20) {
     try {
       const skip = (page - 1) * pageSize;
 

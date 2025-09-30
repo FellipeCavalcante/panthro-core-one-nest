@@ -7,9 +7,18 @@ import { EnterpriseModule } from './enterprise/enterprise.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { UserModule } from './user/user.module';
+import { SectorModule } from './sector/sector.module';
+import { SubSectorModule } from './subSector/subSector.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, EnterpriseModule, UserModule],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    EnterpriseModule,
+    UserModule,
+    SectorModule,
+    SubSectorModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

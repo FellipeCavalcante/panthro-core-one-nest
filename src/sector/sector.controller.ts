@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { SectorService } from './sector.service';
 import { CreateSectorDto } from './dtos/create-sector.dto';
 import { GetUserId } from 'src/utils/decorators/get-user-id.decorator';
@@ -13,7 +13,14 @@ export class SectorController {
   }
 
   @Get()
-  async getAll(@GetUserId() id: string) {
-    return this.service.getAll(id);
+  async getAll(
+    @GetUserId() id: string,
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+  ) {
+    const currentPage = page && page > 0 ? Number(page) : 1;
+    const currentPageSize = pageSize && pageSize > 0 ? Number(pageSize) : 20;
+
+    return this.service.getAll(id, currentPage, currentPageSize);
   }
 }
