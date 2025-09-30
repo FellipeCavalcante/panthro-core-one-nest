@@ -1,10 +1,65 @@
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 
+@Injectable()
 export class SubSectorService {
   constructor(private prisma: PrismaService) {}
 
-  async create() {
+  async create({
+    id,
+    name,
+    sectorId,
+  }: {
+    id: string;
+    name: string;
+    sectorId: string;
+  }): Promise<{ id: string; name: string; sectorId: string }> {
     try {
-    } catch (error: any) {}
+      const user = await this.prisma.users.findUnique({
+        where: { id },
+        select: { enterprise_id: true },
+      });
+
+      if (!user) throw new NotFoundException('User not found');
+
+      const sector = await this.prisma.sector.findFirst({
+        where: { id: sectorId },
+        select: { enterprise_id: true },
+      });
+
+      if (!sector) throw new NotFoundException('Sector not found');
+
+      if (sector.enterprise_id !== user.enterprise_id)
+        throw new ForbiddenException('Sector id and user do not match');
+
+      const subSector = await this.prisma.sub_sector.create({
+        data: {
+          name,
+          sector_id: sectorId,
+        },
+      });
+
+      return {
+        id: subSector.id,
+        name: subSector.name,
+        sectorId: subSector.sector_id,
+      };
+    } catch (error: any) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
+      throw new InternalServerErrorException({
+        message: 'Internal server error',
+        error: error.message,
+      });
+    }
   }
 }
