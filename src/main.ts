@@ -1,6 +1,6 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { NotFoundFilter } from './utils/not-found-filter';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { NotFoundFilter } from "./utils/filters/not-found-filter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -3,8 +3,10 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/config/database/prisma.service";
+import { verifyUserType } from "src/utils/filters/verify-user-type";
 
 @Injectable()
 export class SubSectorService {
@@ -54,6 +56,35 @@ export class SubSectorService {
         error instanceof NotFoundException ||
         error instanceof ForbiddenException
       ) {
+        throw error;
+      }
+      throw new InternalServerErrorException({
+        message: "Internal server error",
+        error: error.message,
+      });
+    }
+  }
+
+  async addMemberToSubSector(
+    userId: string,
+    sectorId: string,
+    memberId: string,
+  ): Promise<{ message: string }> {
+    const userRole = await verifyUserType.call(this, userId);
+
+    try {
+      if (userRole !== "ADMIN" && userRole !== "MANAGER") {
+        throw new UnauthorizedException("User not authorized");
+      }
+
+      await this.prisma.users.update({
+        where: { id: memberId },
+        data: { sub_sector_id: sectorId },
+      });
+
+      return { message: "Member added to sub sector successfully" };
+    } catch (error: any) {
+      if (error instanceof UnauthorizedException) {
         throw error;
       }
       throw new InternalServerErrorException({
