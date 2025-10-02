@@ -3,9 +3,9 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/database/prisma.service';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { PrismaService } from "src/config/database/prisma.service";
 
 @Injectable()
 export class EnterpriseService {
@@ -32,7 +32,7 @@ export class EnterpriseService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException("User not found");
       }
 
       const enterpriseAllReadyExists = await this.prisma.enterprise.findFirst({
@@ -40,7 +40,7 @@ export class EnterpriseService {
       });
 
       if (enterpriseAllReadyExists) {
-        throw new ConflictException('Enterprise all ready exists');
+        throw new ConflictException("Enterprise all ready exists");
       }
 
       const enterpriseCreated = await this.prisma.enterprise.create({
@@ -53,7 +53,7 @@ export class EnterpriseService {
 
       const newUserRole = await this.prisma.users.update({
         where: { id: user.id },
-        data: { enterprise_id: enterpriseCreated.id, type: 'ADMIN' },
+        data: { enterprise_id: enterpriseCreated.id, type: "ADMIN" },
       });
 
       const payload = {
@@ -80,7 +80,7 @@ export class EnterpriseService {
         throw error;
       }
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }
@@ -95,7 +95,7 @@ export class EnterpriseService {
           select: { id: true, name: true, description: true },
           skip,
           take: pageSize,
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
         }),
         this.prisma.enterprise.count(),
       ]);
@@ -109,7 +109,7 @@ export class EnterpriseService {
       };
     } catch (error: any) {
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }

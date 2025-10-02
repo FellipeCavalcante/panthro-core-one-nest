@@ -1,5 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { PrismaService } from "src/config/database/prisma.service";
 
 @Injectable()
 export class UserService {
@@ -13,7 +13,7 @@ export class UserService {
         this.prisma.users.findMany({
           skip,
           take: pageSize,
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
         }),
         this.prisma.users.count(),
       ]);
@@ -27,7 +27,7 @@ export class UserService {
       };
     } catch (error: any) {
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }

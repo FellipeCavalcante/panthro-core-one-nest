@@ -4,8 +4,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+} from "@nestjs/common";
+import { PrismaService } from "src/config/database/prisma.service";
 
 @Injectable()
 export class SectorService {
@@ -23,28 +23,28 @@ export class SectorService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException("User not found");
       }
 
       if (
-        (user.type !== 'ADMIN' && user.type !== 'MANAGER') ||
+        (user.type !== "ADMIN" && user.type !== "MANAGER") ||
         !user.enterprise_id
       ) {
-        throw new UnauthorizedException('User not authorized');
+        throw new UnauthorizedException("User not authorized");
       }
 
       const sectorAlreadyExists = await this.prisma.sector.findFirst({
         where: {
           name: {
             equals: name,
-            mode: 'insensitive',
+            mode: "insensitive",
           },
           enterprise_id: user.enterprise_id,
         },
       });
 
       if (sectorAlreadyExists) {
-        throw new ConflictException('Sector already exists');
+        throw new ConflictException("Sector already exists");
       }
 
       const sector = await this.prisma.sector.create({
@@ -55,7 +55,7 @@ export class SectorService {
       });
 
       return {
-        message: 'Sector created successfully',
+        message: "Sector created successfully",
         id: sector.id,
         name: sector.name,
         enterprise_id: sector.enterprise_id,
@@ -69,7 +69,7 @@ export class SectorService {
         throw error;
       }
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }
@@ -83,11 +83,11 @@ export class SectorService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException("User not found");
       }
 
       if (!user.enterprise_id) {
-        throw new UnauthorizedException('User not authorized');
+        throw new UnauthorizedException("User not authorized");
       }
 
       const [sectors, total] = await this.prisma.$transaction([
@@ -95,7 +95,7 @@ export class SectorService {
           where: { enterprise_id: user.enterprise_id },
           skip,
           take: pageSize,
-          orderBy: { name: 'asc' },
+          orderBy: { name: "asc" },
         }),
         this.prisma.sector.count({
           where: { enterprise_id: user.enterprise_id },
@@ -117,7 +117,7 @@ export class SectorService {
         throw error;
       }
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }

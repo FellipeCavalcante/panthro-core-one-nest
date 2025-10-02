@@ -1,6 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Public } from './auth/constants/constants';
+import { Controller, Get } from "@nestjs/common";
+import { AppService } from "./app.service";
+import { Public } from "./config/guard/constants/constants";
 
 @Controller()
 export class AppController {
@@ -10,12 +10,12 @@ export class AppController {
   @Get()
   healthCheck(): { status: string; timestamp: string } {
     return {
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Get('/he')
+  @Get("/he")
   getHello(): string {
     return this.appService.getHello();
   }

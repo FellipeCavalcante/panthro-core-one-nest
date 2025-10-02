@@ -7,5 +7,5 @@ export class CreateSubSectorDto {
 
   @IsString()
   @IsNotEmpty()
-  sectorId: string;
+  sector: string;
 }

@@ -2,10 +2,10 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/database/prisma.service';
-import * as bcrypt from 'bcrypt';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { PrismaService } from "src/config/database/prisma.service";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -29,13 +29,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     const payload = { sub: user.id, email: user.email, type: user.type };
@@ -73,24 +73,24 @@ export class AuthService {
     });
 
     if (userExists) {
-      throw new UnauthorizedException('User already exists');
+      throw new UnauthorizedException("User already exists");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (!type) {
-      type = 'WORKER';
+      type = "WORKER";
     }
 
     type = type.toUpperCase();
 
     if (
-      type !== 'WORKER' &&
-      type !== 'ADMIN' &&
-      type !== 'MANAGER' &&
-      type !== 'CLIENT'
+      type !== "WORKER" &&
+      type !== "ADMIN" &&
+      type !== "MANAGER" &&
+      type !== "CLIENT"
     ) {
-      throw new BadRequestException('Invalid user type');
+      throw new BadRequestException("Invalid user type");
     }
 
     const user = await this.prismaService.users.create({

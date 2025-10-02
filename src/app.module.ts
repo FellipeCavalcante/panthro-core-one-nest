@@ -1,14 +1,15 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './database/prisma.module';
-import { EnterpriseModule } from './enterprise/enterprise.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
-import { UserModule } from './user/user.module';
-import { SectorModule } from './sector/sector.module';
-import { SubSectorModule } from './subSector/subSector.module';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { AuthModule } from "./modules/auth/auth.module";
+import { PrismaModule } from "./config/database/prisma.module";
+import { EnterpriseModule } from "./modules/enterprise/enterprise.module";
+import { APP_GUARD } from "@nestjs/core";
+import { UserModule } from "./modules/user/user.module";
+import { SectorModule } from "./modules/sector/sector.module";
+import { SubSectorModule } from "./modules/subSector/subSector.module";
+import { TaskModule } from "./modules/task/task.module";
+import { AuthGuard } from "./config/guard/auth.guard";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SubSectorModule } from './subSector/subSector.module';
     UserModule,
     SectorModule,
     SubSectorModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [

@@ -3,8 +3,8 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-} from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+} from "@nestjs/common";
+import { PrismaService } from "src/config/database/prisma.service";
 
 @Injectable()
 export class SubSectorService {
@@ -13,11 +13,11 @@ export class SubSectorService {
   async create({
     id,
     name,
-    sectorId,
+    sector,
   }: {
     id: string;
     name: string;
-    sectorId: string;
+    sector: string;
   }): Promise<{ id: string; name: string; sectorId: string }> {
     try {
       const user = await this.prisma.users.findUnique({
@@ -25,22 +25,22 @@ export class SubSectorService {
         select: { enterprise_id: true },
       });
 
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) throw new NotFoundException("User not found");
 
-      const sector = await this.prisma.sector.findFirst({
-        where: { id: sectorId },
+      const sectorExists = await this.prisma.sector.findFirst({
+        where: { id: sector },
         select: { enterprise_id: true },
       });
 
-      if (!sector) throw new NotFoundException('Sector not found');
+      if (!sectorExists) throw new NotFoundException("Sector not found");
 
-      if (sector.enterprise_id !== user.enterprise_id)
-        throw new ForbiddenException('Sector id and user do not match');
+      if (sectorExists.enterprise_id !== user.enterprise_id)
+        throw new ForbiddenException("Sector id and user do not match");
 
       const subSector = await this.prisma.sub_sector.create({
         data: {
           name,
-          sector_id: sectorId,
+          sector_id: sector,
         },
       });
 
@@ -57,7 +57,7 @@ export class SubSectorService {
         throw error;
       }
       throw new InternalServerErrorException({
-        message: 'Internal server error',
+        message: "Internal server error",
         error: error.message,
       });
     }
